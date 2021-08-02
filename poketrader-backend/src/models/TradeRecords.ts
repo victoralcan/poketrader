@@ -26,7 +26,7 @@ class TradeRecords {
   @Column()
   pokemon_id: string;
 
-  @Column()
+  @Column('boolean')
   left: boolean;
 
   @ManyToOne(() => Pokemon, pokemon => pokemon.tradeRecords, { eager: true })
