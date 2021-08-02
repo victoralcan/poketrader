@@ -26,6 +26,9 @@ class TradeRecords {
   @Column()
   pokemon_id: string;
 
+  @Column()
+  left: boolean;
+
   @ManyToOne(() => Pokemon, pokemon => pokemon.tradeRecords, { eager: true })
   @JoinColumn({ name: 'pokemon_id' })
   pokemon: Pokemon;

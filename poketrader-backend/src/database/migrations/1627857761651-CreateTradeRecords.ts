@@ -28,6 +28,10 @@ export default class CreateTradeRecords1627857761651
             type: 'uuid',
           },
           {
+            name: 'left',
+            type: 'boolean',
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',
