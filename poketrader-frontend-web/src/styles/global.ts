@@ -10,10 +10,12 @@ export default createGlobalStyle`
 
   #root {
     margin: 0 auto;
+    height: 100%;
   }
 
   body {
     background: #9FB9BC;
+    height: 100vh;
   }
 
   body, input, button {
@@ -21,7 +23,7 @@ export default createGlobalStyle`
   }
 
   a {
-    color: #000
+    color: #000;
   }
 
   button {

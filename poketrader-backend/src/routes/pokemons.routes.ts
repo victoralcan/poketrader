@@ -7,8 +7,8 @@ import CreatePokemonService from '../services/CreatePokemonService';
 
 const pokemonsRouter = Router();
 
-pokemonsRouter.get('/', async (request, response) => {
-  const { name } = request.body;
+pokemonsRouter.get('/:name', async (request, response) => {
+  const { name } = request.params;
   const pokemonsRepository = getCustomRepository(PokemonsRepository);
   const pokemonOnCache = await pokemonsRepository.findOne({
     where: { name },
