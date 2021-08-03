@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Card,
@@ -7,6 +7,7 @@ import {
   CardHeader,
   Input,
 } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IPokemon } from '../../shared/models/IPokemon';
 import Api from '../../services/Api';
 
@@ -18,11 +19,47 @@ const Trades: React.FC = () => {
   const [leftPokemons, setLeftPokemons] = useState<Array<IPokemon>>([]);
   const [rightPokemons, setRightPokemons] = useState<Array<IPokemon>>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [tradeRate, setTradeRate] = useState<number>(0);
   const errorMessage = 'Pokemon does not exists!';
   const inputPlaceholder = 'Type Pokemon name';
   const searchingText = 'Searching Pokemon...';
 
+  const calculateTradeRate = (): void => {
+    const totalLeftBaseExperience = leftPokemons.reduce(
+      (total, pokemon) => total + pokemon.base_experience,
+      0,
+    );
+    const totalRightBaseExperience = rightPokemons.reduce(
+      (total, pokemon) => total + pokemon.base_experience,
+      0,
+    );
+    if (totalLeftBaseExperience >= totalRightBaseExperience) {
+      setTradeRate(totalLeftBaseExperience / totalRightBaseExperience);
+      return;
+    }
+    setTradeRate(totalRightBaseExperience / totalLeftBaseExperience);
+  };
+
+  useEffect(() => {
+    calculateTradeRate();
+    // eslint-disable-next-line
+  }, [leftPokemons, rightPokemons]);
+
+  const handlePokemonDelete = (left: boolean, idx: number): void => {
+    if (left) {
+      const copy = [...leftPokemons];
+      copy.splice(idx, 1);
+      setLeftPokemons([...copy]);
+    } else {
+      const copy = [...rightPokemons];
+      copy.splice(idx, 1);
+      setRightPokemons([...copy]);
+    }
+  };
+
   const handlePokemonSearch = async (left: boolean): Promise<void> => {
+    if (left && leftPokemons.length >= 6) return;
+    if (!left && rightPokemons.length >= 6) return;
     setLeftSearchError(false);
     setRightSearchError(false);
     setLoading(true);
@@ -43,7 +80,9 @@ const Trades: React.FC = () => {
   return (
     <div className="d-flex h-100 align-items-center">
       <Card className="w-75 mx-auto shadow">
-        <CardHeader>Choose pokemons for trade!</CardHeader>
+        <CardHeader>
+          Choose pokemons for trade! You can put 1 to 6 pokemons each side!
+        </CardHeader>
         <CardBody>
           <div className="d-flex flex-row">
             <div className="flex-grow-1 border border-info rounded mx-2">
@@ -72,9 +111,16 @@ const Trades: React.FC = () => {
                   minHeight: '200px',
                 }}
               >
-                {leftPokemons.map(pokemon => (
-                  <div className="m-2">
-                    Pokemon: {pokemon.name} <Button>D</Button>
+                {leftPokemons.map((pokemon, idx) => (
+                  <div className="m-3">
+                    <span className="font-weight-bold">Pokemon:</span>&nbsp;
+                    <span>{pokemon.name}</span>
+                    <Button
+                      className="bg-danger border-0 mx-3"
+                      onClick={() => handlePokemonDelete(true, idx)}
+                    >
+                      <FontAwesomeIcon icon="trash" />
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -105,13 +151,32 @@ const Trades: React.FC = () => {
                   minHeight: '200px',
                 }}
               >
-                {rightPokemons.map(pokemon => (
-                  <div className="m-2">
-                    Pokemon: {pokemon.name} <Button>D</Button>
+                {rightPokemons.map((pokemon, idx) => (
+                  <div className="m-3">
+                    <span className="font-weight-bold">Pokemon:</span>&nbsp;
+                    <span>{pokemon.name}</span>
+                    <Button
+                      className="bg-danger border-0 mx-3"
+                      onClick={() => handlePokemonDelete(false, idx)}
+                    >
+                      <FontAwesomeIcon icon="trash" />
+                    </Button>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
+          <div className="text-center m-3">
+            {tradeRate > 0 && (
+              <>
+                <span>Fair trade:&nbsp;</span>
+                {tradeRate > 1.2 ? (
+                  <span className="text-danger">Unfair</span>
+                ) : (
+                  <span className="text-success">Fair</span>
+                )}
+              </>
+            )}
           </div>
         </CardBody>
         <CardFooter>

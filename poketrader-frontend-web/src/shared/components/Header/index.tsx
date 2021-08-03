@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Collapse, Nav, Navbar, NavbarToggler } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGripLines } from '@fortawesome/free-solid-svg-icons';
 import pokemonTitle from '../../assets/pokemon_title.png';
 import pokeball from '../../assets/pokeball.png';
 
@@ -31,7 +33,9 @@ const Header: React.FC = () => {
           }}
         />
       </div>
-      <NavbarToggler onClick={toggle}>+</NavbarToggler>
+      <NavbarToggler onClick={toggle}>
+        <FontAwesomeIcon icon={faGripLines} />
+      </NavbarToggler>
       <Collapse isOpen={isOpen} navbar>
         <Nav navbar>
           <Link className="pl-5 pr-3 text-decoration-none" to="/">
