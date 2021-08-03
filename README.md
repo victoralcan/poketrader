@@ -12,5 +12,5 @@ To run back-end, enter on back end directory and execute `yarn install`. After t
 
 ### Setup Database
 
-I recommend using postgresql with docker. With docker installed, execute command `docker run --name postgres -e POSTGRES_PASSWORD=docker -e POSTGRES_USER=postgres -e POSTGRES_DB=poketrader -p 5432:5432 -d postgres`.
+I recommend using postgresql with docker. With docker installed, execute command `docker run --name postgres -e POSTGRES_PASSWORD=docker -e POSTGRES_USER=postgres -e POSTGRES_DB=poketrader -p 5432:5432 -d postgres`. With database up, run `yarn typeorm migration:run`. And that's it! 
 
