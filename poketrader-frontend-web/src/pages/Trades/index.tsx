@@ -12,6 +12,7 @@ import {
   ModalHeader,
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import { IPokemon } from '../../shared/models/IPokemon';
 import Api from '../../services/Api';
 
@@ -25,6 +26,9 @@ const Trades: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [tradeRate, setTradeRate] = useState<number>(0);
   const [modal, setModal] = useState(false);
+  const [submitErrorMessage, setSubmitErrorMessage] = useState<string>('');
+  const [submitError, setSubmitError] = useState<boolean>(false);
+  const [submiting, setSubmiting] = useState<boolean>(false);
   const errorMessage = 'Pokemon does not exists!';
   const inputPlaceholder = 'Type Pokemon name';
   const searchingText = 'Searching Pokemon...';
@@ -53,8 +57,18 @@ const Trades: React.FC = () => {
   }, [leftPokemons, rightPokemons]);
 
   const handleTradeSubmit = async (): Promise<void> => {
+    setSubmitError(false);
+    if (leftPokemons.length === 0 || rightPokemons.length === 0) {
+      setModal(true);
+      setSubmitError(true);
+      setSubmitErrorMessage(
+        'You need to select at least 1 pokemon on each side of trade!',
+      );
+      return;
+    }
     setModal(true);
     try {
+      setSubmiting(true);
       const trade = {
         trade_rate: tradeRate,
         fair_trade: tradeRate <= 1.2,
@@ -62,8 +76,13 @@ const Trades: React.FC = () => {
         rightPokemons,
       };
       await Api.post('/trades', trade);
+      setSubmiting(false);
     } catch (e) {
-      // tratar erro
+      setSubmiting(false);
+      setSubmitError(true);
+      setSubmitErrorMessage(
+        'There was an error registering your trade! Please try again!',
+      );
     }
   };
 
@@ -87,7 +106,9 @@ const Trades: React.FC = () => {
     setLoading(true);
     try {
       const newPokemon = await Api.get(
-        `/pokemons/${left ? leftSearch : rightSearch}`,
+        `/pokemons/${
+          left ? leftSearch.toLowerCase() : rightSearch.toLowerCase()
+        }`,
       );
       if (left) setLeftPokemons([...leftPokemons, newPokemon.data]);
       else setRightPokemons([...rightPokemons, newPokemon.data]);
@@ -137,8 +158,15 @@ const Trades: React.FC = () => {
               >
                 {leftPokemons.map((pokemon, idx) => (
                   <div className="m-3">
-                    <span className="font-weight-bold">Pokemon:</span>&nbsp;
-                    <span>{pokemon.name}</span>&nbsp;
+                    <span className="font-weight-bold text-warning">
+                      Pokemon:
+                    </span>
+                    &nbsp;
+                    <span className="text-capitalize">{pokemon.name}</span>
+                    &nbsp;
+                    <span className="font-weight-bold text-info">
+                      XP:&nbsp;
+                    </span>
                     <span>{pokemon.base_experience}</span>
                     <Button
                       className="bg-danger border-0 mx-3"
@@ -146,6 +174,7 @@ const Trades: React.FC = () => {
                     >
                       <FontAwesomeIcon icon="trash" />
                     </Button>
+                    <hr />
                   </div>
                 ))}
               </div>
@@ -178,8 +207,15 @@ const Trades: React.FC = () => {
               >
                 {rightPokemons.map((pokemon, idx) => (
                   <div className="m-3">
-                    <span className="font-weight-bold">Pokemon:</span>&nbsp;
-                    <span>{pokemon.name}</span>&nbsp;
+                    <span className="font-weight-bold text-warning">
+                      Pokemon:
+                    </span>
+                    &nbsp;
+                    <span className="text-capitalize text-info">
+                      {pokemon.name}
+                    </span>
+                    &nbsp;
+                    <span className="font-weight-bold">XP:&nbsp;</span>
                     <span>{pokemon.base_experience}</span>
                     <Button
                       className="bg-danger border-0 mx-3"
@@ -187,6 +223,7 @@ const Trades: React.FC = () => {
                     >
                       <FontAwesomeIcon icon="trash" />
                     </Button>
+                    <hr />
                   </div>
                 ))}
               </div>
@@ -195,12 +232,14 @@ const Trades: React.FC = () => {
           <div className="text-center m-3">
             {tradeRate > 0 && (
               <>
-                <span>Fair trade:&nbsp;</span>
+                <span>It&apos;s a&nbsp;</span>
                 {tradeRate > 1.2 ? (
                   <span className="text-danger font-weight-bold">Unfair</span>
                 ) : (
                   <span className="text-success font-weight-bold">Fair</span>
                 )}
+                &nbsp;
+                <span>Trade!</span>
               </>
             )}
           </div>
@@ -217,8 +256,23 @@ const Trades: React.FC = () => {
       </Card>
       <Modal isOpen={modal} toggle={toggleModal}>
         <ModalHeader toggle={toggleModal}>Trade Result</ModalHeader>
-        <ModalBody>Trade sucessfully made!</ModalBody>
+        <ModalBody>
+          {/* eslint-disable-next-line no-nested-ternary */}
+          {submiting
+            ? 'Registering trade'
+            : submitError
+            ? submitErrorMessage
+            : 'Trade sucessfully made!'}
+        </ModalBody>
         <ModalFooter>
+          <Button
+            tag={Link}
+            to="/trades/history"
+            color="success"
+            onClick={toggleModal}
+          >
+            Go to Trades History
+          </Button>
           <Button color="danger" onClick={toggleModal}>
             Close
           </Button>

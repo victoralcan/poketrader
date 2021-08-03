@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Accordion, Row, Col } from 'react-bootstrap';
+import { Accordion, Card, Col, Row } from 'react-bootstrap';
 import { ITrade } from '../../shared/models/ITrade';
 import Api from '../../services/Api';
 
@@ -16,7 +16,6 @@ const TradesHistory: React.FC = () => {
         setLoading(false);
       } catch (e) {
         setLoading(false);
-        console.log(e);
       }
     }
 
@@ -39,60 +38,89 @@ const TradesHistory: React.FC = () => {
           <>
             <Card.Header>Trades History</Card.Header>
             <Card.Body>
-              <div className="d-flex flex-row">
-                <Accordion className="flex-grow-1">
-                  {trades.map((trade, idx) => (
-                    <Card key={trade.id}>
-                      <Accordion.Toggle as={Card.Header} eventKey={String(idx)}>
-                        Trade {idx + 1}&nbsp;at&nbsp;
-                        {formatDate(new Date(trade.created_at))}
-                      </Accordion.Toggle>
-                      <Accordion.Collapse eventKey={String(idx)}>
-                        <Card.Body>
-                          <div>
-                            Fair trade: {trade.fair_trade ? 'Fair' : 'Unfair'}
-                          </div>
-                          <br />
-                          <Row>
-                            <Col md={6}>
-                              <div>Side 1 of trade</div>
-                              {trade.tradeRecords
-                                .filter(
-                                  tradeRecordFilter => tradeRecordFilter.left,
-                                )
-                                .map(tradeRecord => (
-                                  <>
-                                    <div>
-                                      Pokemon: {tradeRecord.pokemon.name}
-                                      &nbsp;XP:
-                                      {tradeRecord.pokemon.base_experience}
-                                    </div>
-                                  </>
-                                ))}
-                            </Col>
-                            <Col md={6}>
-                              <div>Side 2 of trade</div>
-                              {trade.tradeRecords
-                                .filter(
-                                  tradeRecordFilter => !tradeRecordFilter.left,
-                                )
-                                .map(tradeRecord => (
-                                  <>
-                                    <div>
-                                      Pokemon: {tradeRecord.pokemon.name}
-                                      &nbsp;XP:
-                                      {tradeRecord.pokemon.base_experience}
-                                    </div>
-                                  </>
-                                ))}
-                            </Col>
-                          </Row>
-                        </Card.Body>
-                      </Accordion.Collapse>
-                    </Card>
-                  ))}
-                </Accordion>
-              </div>
+              {trades.length > 0 ? (
+                <div className="d-flex flex-row">
+                  <Accordion className="flex-grow-1">
+                    {trades.map((trade, idx) => (
+                      <Card key={trade.id}>
+                        <Accordion.Toggle
+                          as={Card.Header}
+                          eventKey={String(idx)}
+                        >
+                          {trade.fair_trade ? (
+                            <span className="text-success">Fair</span>
+                          ) : (
+                            <span className="text-danger">Unfair</span>
+                          )}
+                          &nbsp;Trade&nbsp;at&nbsp;
+                          {formatDate(new Date(trade.created_at))}
+                        </Accordion.Toggle>
+                        <Accordion.Collapse eventKey={String(idx)}>
+                          <Card.Body>
+                            <Row>
+                              <Col md={6}>
+                                <div className="font-weight-bold">Side 1</div>
+                                <br />
+                                {trade.tradeRecords
+                                  .filter(
+                                    tradeRecordFilter => tradeRecordFilter.left,
+                                  )
+                                  .map(tradeRecord => (
+                                    <>
+                                      <div>
+                                        <span className="font-weight-bold text-warning">
+                                          Pokemon:
+                                        </span>
+                                        &nbsp;
+                                        <span className="text-capitalize">
+                                          {tradeRecord.pokemon.name}
+                                        </span>
+                                        &nbsp;
+                                        <span className="font-weight-bold text-info">
+                                          XP:
+                                        </span>
+                                        {tradeRecord.pokemon.base_experience}
+                                      </div>
+                                    </>
+                                  ))}
+                              </Col>
+                              <Col md={6}>
+                                <div className="font-weight-bold">Side 2</div>
+                                <br />
+                                {trade.tradeRecords
+                                  .filter(
+                                    tradeRecordFilter =>
+                                      !tradeRecordFilter.left,
+                                  )
+                                  .map(tradeRecord => (
+                                    <>
+                                      <div>
+                                        <span className="font-weight-bold text-warning">
+                                          Pokemon:
+                                        </span>
+                                        &nbsp;
+                                        <span className="text-capitalize">
+                                          {tradeRecord.pokemon.name}
+                                        </span>
+                                        &nbsp;
+                                        <span className="font-weight-bold text-info">
+                                          XP:
+                                        </span>
+                                        {tradeRecord.pokemon.base_experience}
+                                      </div>
+                                    </>
+                                  ))}
+                              </Col>
+                            </Row>
+                          </Card.Body>
+                        </Accordion.Collapse>
+                      </Card>
+                    ))}
+                  </Accordion>
+                </div>
+              ) : (
+                <div>No trades made yet...</div>
+              )}
             </Card.Body>
           </>
         )}

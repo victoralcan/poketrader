@@ -19,7 +19,7 @@ export default createGlobalStyle`
   }
 
   body, input, button {
-    font: 18px Verdana, sans-serif;
+    font-family: 'Nunito', sans-serif;
   }
 
   a {
