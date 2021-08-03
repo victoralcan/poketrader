@@ -19,7 +19,7 @@ const Header: React.FC = () => {
       expand="lg"
       className="sticky-top shadow"
       style={{
-        backgroundColor: '#9FB9BC',
+        backgroundColor: '#516BB8',
       }}
     >
       {/* eslint-disable-next-line */}
@@ -45,10 +45,10 @@ const Header: React.FC = () => {
       <Collapse isOpen={isOpen} navbar>
         <Nav navbar>
           <Link className="pl-5 pr-3 text-decoration-none" to="/">
-            <h4>Simulate Trade</h4>
+            <h4 className="text-white hoverHeaderLink">Simulate Trade</h4>
           </Link>
           <Link className="px-3 text-decoration-none" to="/trades/history">
-            <h4>Trades History</h4>
+            <h4 className="text-white hoverHeaderLink">Trades History</h4>
           </Link>
         </Nav>
       </Collapse>

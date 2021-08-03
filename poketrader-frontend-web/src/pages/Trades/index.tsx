@@ -158,7 +158,7 @@ const Trades: React.FC = () => {
               >
                 {leftPokemons.map((pokemon, idx) => (
                   <div className="m-3">
-                    <span className="font-weight-bold text-warning">
+                    <span className="font-weight-bold text-primary">
                       Pokemon:
                     </span>
                     &nbsp;
@@ -207,15 +207,15 @@ const Trades: React.FC = () => {
               >
                 {rightPokemons.map((pokemon, idx) => (
                   <div className="m-3">
-                    <span className="font-weight-bold text-warning">
+                    <span className="font-weight-bold text-primary">
                       Pokemon:
                     </span>
                     &nbsp;
-                    <span className="text-capitalize text-info">
-                      {pokemon.name}
-                    </span>
+                    <span className="text-capitalize">{pokemon.name}</span>
                     &nbsp;
-                    <span className="font-weight-bold">XP:&nbsp;</span>
+                    <span className="font-weight-bold text-info">
+                      XP:&nbsp;
+                    </span>
                     <span>{pokemon.base_experience}</span>
                     <Button
                       className="bg-danger border-0 mx-3"
@@ -229,9 +229,10 @@ const Trades: React.FC = () => {
               </div>
             </div>
           </div>
+          <br />
           <div className="text-center m-3">
             {tradeRate > 0 && (
-              <>
+              <div className="h3">
                 <span>It&apos;s a&nbsp;</span>
                 {tradeRate > 1.2 ? (
                   <span className="text-danger font-weight-bold">Unfair</span>
@@ -240,7 +241,7 @@ const Trades: React.FC = () => {
                 )}
                 &nbsp;
                 <span>Trade!</span>
-              </>
+              </div>
             )}
           </div>
         </CardBody>

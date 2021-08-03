@@ -36,7 +36,9 @@ const TradesHistory: React.FC = () => {
           <div>Loading...</div>
         ) : (
           <>
-            <Card.Header>Trades History</Card.Header>
+            <Card.Header>
+              <h4>Trades History</h4>
+            </Card.Header>
             <Card.Body>
               {trades.length > 0 ? (
                 <div className="d-flex flex-row">
@@ -68,7 +70,7 @@ const TradesHistory: React.FC = () => {
                                   .map(tradeRecord => (
                                     <>
                                       <div>
-                                        <span className="font-weight-bold text-warning">
+                                        <span className="font-weight-bold text-primary">
                                           Pokemon:
                                         </span>
                                         &nbsp;
@@ -95,7 +97,7 @@ const TradesHistory: React.FC = () => {
                                   .map(tradeRecord => (
                                     <>
                                       <div>
-                                        <span className="font-weight-bold text-warning">
+                                        <span className="font-weight-bold text-primary">
                                           Pokemon:
                                         </span>
                                         &nbsp;
