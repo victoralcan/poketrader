@@ -6,6 +6,10 @@ import {
   CardFooter,
   CardHeader,
   Input,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IPokemon } from '../../shared/models/IPokemon';
@@ -20,9 +24,12 @@ const Trades: React.FC = () => {
   const [rightPokemons, setRightPokemons] = useState<Array<IPokemon>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [tradeRate, setTradeRate] = useState<number>(0);
+  const [modal, setModal] = useState(false);
   const errorMessage = 'Pokemon does not exists!';
   const inputPlaceholder = 'Type Pokemon name';
   const searchingText = 'Searching Pokemon...';
+
+  const toggleModal = (): void => setModal(!modal);
 
   const calculateTradeRate = (): void => {
     const totalLeftBaseExperience = leftPokemons.reduce(
@@ -44,6 +51,21 @@ const Trades: React.FC = () => {
     calculateTradeRate();
     // eslint-disable-next-line
   }, [leftPokemons, rightPokemons]);
+
+  const handleTradeSubmit = async (): Promise<void> => {
+    setModal(true);
+    try {
+      const trade = {
+        trade_rate: tradeRate,
+        fair_trade: tradeRate <= 1.2,
+        leftPokemons,
+        rightPokemons,
+      };
+      await Api.post('/trades', trade);
+    } catch (e) {
+      // tratar erro
+    }
+  };
 
   const handlePokemonDelete = (left: boolean, idx: number): void => {
     if (left) {
@@ -81,7 +103,9 @@ const Trades: React.FC = () => {
     <div className="d-flex h-100 align-items-center">
       <Card className="w-75 mx-auto shadow">
         <CardHeader>
-          Choose pokemons for trade! You can put 1 to 6 pokemons each side!
+          <h4>
+            Choose pokemons for trade! You can put 1 to 6 pokemons each side!
+          </h4>
         </CardHeader>
         <CardBody>
           <div className="d-flex flex-row">
@@ -114,7 +138,8 @@ const Trades: React.FC = () => {
                 {leftPokemons.map((pokemon, idx) => (
                   <div className="m-3">
                     <span className="font-weight-bold">Pokemon:</span>&nbsp;
-                    <span>{pokemon.name}</span>
+                    <span>{pokemon.name}</span>&nbsp;
+                    <span>{pokemon.base_experience}</span>
                     <Button
                       className="bg-danger border-0 mx-3"
                       onClick={() => handlePokemonDelete(true, idx)}
@@ -154,7 +179,8 @@ const Trades: React.FC = () => {
                 {rightPokemons.map((pokemon, idx) => (
                   <div className="m-3">
                     <span className="font-weight-bold">Pokemon:</span>&nbsp;
-                    <span>{pokemon.name}</span>
+                    <span>{pokemon.name}</span>&nbsp;
+                    <span>{pokemon.base_experience}</span>
                     <Button
                       className="bg-danger border-0 mx-3"
                       onClick={() => handlePokemonDelete(false, idx)}
@@ -171,20 +197,33 @@ const Trades: React.FC = () => {
               <>
                 <span>Fair trade:&nbsp;</span>
                 {tradeRate > 1.2 ? (
-                  <span className="text-danger">Unfair</span>
+                  <span className="text-danger font-weight-bold">Unfair</span>
                 ) : (
-                  <span className="text-success">Fair</span>
+                  <span className="text-success font-weight-bold">Fair</span>
                 )}
               </>
             )}
           </div>
         </CardBody>
         <CardFooter>
-          <Button className="float-right" color="primary">
+          <Button
+            className="float-right"
+            color="primary"
+            onClick={handleTradeSubmit}
+          >
             Register trade!
           </Button>
         </CardFooter>
       </Card>
+      <Modal isOpen={modal} toggle={toggleModal}>
+        <ModalHeader toggle={toggleModal}>Trade Result</ModalHeader>
+        <ModalBody>Trade sucessfully made!</ModalBody>
+        <ModalFooter>
+          <Button color="danger" onClick={toggleModal}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 };

@@ -15,7 +15,13 @@ const Header: React.FC = () => {
   const contentWidth = content ? content.clientWidth : 1024;
   const mobile = contentWidth <= 992;
   return (
-    <Navbar expand="lg" className="sticky-top shadow">
+    <Navbar
+      expand="lg"
+      className="sticky-top shadow"
+      style={{
+        backgroundColor: '#9FB9BC',
+      }}
+    >
       {/* eslint-disable-next-line */}
       <div onClick={mobile ? toggle : () => {}}>
         <img
